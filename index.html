@@ -33,7 +33,7 @@ label{display:block;font-weight:700;font-size:.9rem;margin-bottom:4px}
 .big{font-size:2.6rem;font-weight:800;line-height:1}
 .err{color:var(--er);font-weight:700}
 .tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}td,th{border-bottom:1px solid var(--ln);padding:6px 10px 6px 0;text-align:left;vertical-align:top}
-.rt td,.rt th{min-width:150px}.hl{background:var(--sf);border-left:3px solid var(--ac);padding-left:8px}
+.rt td,.rt th{min-width:150px}.ck{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 0;border-bottom:1px solid var(--ln);font-weight:400;font-size:1rem;cursor:pointer}.ck input{width:24px;height:24px;flex-shrink:0;margin:2px 0 0;accent-color:var(--pr)}.ck input:checked+span{color:var(--mu);text-decoration:line-through}.pt{height:10px;background:var(--sf);border:1px solid var(--ln)}.pf{height:100%;width:0;background:var(--ac);transition:width .2s}.hl{background:var(--sf);border-left:3px solid var(--ac);padding-left:8px}
 footer{margin:32px 0;color:var(--mu);font-size:.85rem}
 </style></head><body><main>
 <header class="top"><div class="meta">Centro Educativo Nº 5 Senador A. Bertín · 3° Año DU · Prof. Lamanna Editta Verónica</div>
@@ -46,6 +46,10 @@ footer{margin:32px 0;color:var(--mu);font-size:.85rem}
 <form id="f"><label for="q" style="position:absolute;left:-9999px">Tu pregunta</label>
 <input type="text" id="q" placeholder="Ej.: ¿cuánto vale el examen oral?" autocomplete="off"><button class="btn" type="submit">Enviar</button></form></section>
 
+<section id="checklist"><h2>Checklist: qué tengo que saber para el examen</h2>
+<p class="meta">Armado con los contenidos de la planificación. La prueba escrita evalúa comprensión lectora, vocabulario y gramática de las Unidades 1 y 2. Marcá lo que ya dominás: queda guardado en tu dispositivo.</p>
+<div style="display:flex;justify-content:space-between;gap:8px"><b id="ckp">0 de 0 temas listos</b><button class="chip" type="button" id="ckr">Reiniciar</button></div>
+<div class="pt" aria-hidden="true"><div class="pf" id="ckb"></div></div><div id="ckl"></div></section>
 <section id="calc"><h2>Calculadora de nota trimestral</h2>
 <p class="meta">Orientativa: no es una calificación oficial. Los datos quedan solo en tu dispositivo.</p>
 <div class="grid">
@@ -88,6 +92,7 @@ function fechas(){let h=D.fechas.map(x=>`<li><b>${x.n}:</b> ${x.f}, ${x.h}. ${x.
  return `<ul>${h}</ul>`+(D.fechasVerificadas?"":"<p><i>Ojo: estas fechas todavía no están confirmadas en la planificación. Verificalas con la profe.</i></p>")}
 const I=[
  {k:["fecha","examen","cuando","recuperatorio","rendir","prueba"],l:"Fechas de examen",a:()=>fechas()},
+ {k:["checklist","saber","repasar","preparar","conocimiento","que necesito saber"],l:"Qué debo saber",a:()=>"<p>Tenés una lista de verificación con lo que se espera que sepas de las Unidades 1 y 2. <a href='#checklist'>Ir al checklist</a>.</p><p>La prueba escrita evalúa comprensión lectora, uso del vocabulario y precisión gramatical.</p>"},
  {k:["evalua","rubrica","logrado","destacado","parrafo","personal profile","nivel","criterio"],l:"Cómo me evalúan",a:()=>D.rubP},
  {k:["calcul","promedio","redond","sacar","necesito","porcentaje","pondera","vale","cuanto","nota"],l:"Calcular mi nota",a:()=>ev+"<p>Fórmula: escrito×0,5 + oral×0,3 + concepto×0,2. Ejemplo: 8, 7 y 9 dan 4 + 2,1 + 1,8 = <b>7,9</b>.</p><p>Usá la calculadora de más abajo. También te dice qué nota necesitás para llegar a tu objetivo.</p><p class='meta'>Redondeo usado: sube al 0,50 o entero superior (6,23 → 6,50; 6,57 → 7). Confirmalo con la profe.</p>"},
  {k:["unidad 1","people","verbo to be","familia","posesivo"],l:"Unidad 1",a:()=>D.u1},
@@ -128,6 +133,18 @@ try{const s=JSON.parse(localStorage.getItem("ing3du")||"null");if(s){g("w").valu
 calc();
 
 g("rb").innerHTML=D.rubP;g("rc").innerHTML=D.rubC;
+const CK=[
+{t:"Unidad 1 · People (págs. 9–20)",i:[["a1","Uso el verbo <i>to be</i> en oraciones afirmativas y negativas (I’m from…, He isn’t…)."],["a2","Uso el posesivo ’s para decir de quién es algo o qué vínculo familiar hay (Maria’s sister)."],["a3","Uso los adjetivos posesivos: my, your, his, her, our, their."],["a4","Uso la preposición <i>in</i> para ubicar (Their home is in…)."],["a5","Doy información personal (nombre, edad, origen, ocupación) y nombro a los miembros de la familia."],["a6","Conozco los verbos cotidianos de la unidad."]]},
+{t:"Unidad 2 · Possessions (págs. 21–32)",i:[["b1","Uso <i>there is / there are</i> para decir qué hay en un lugar."],["b2","Uso las preposiciones de lugar para ubicar objetos."],["b3","Formo sustantivos plurales (reglas regulares y casos frecuentes)."],["b4","Uso <i>this, that, these, those</i> según la distancia y el número."],["b5","Uso <i>one / ones</i> para no repetir sustantivos."],["b6","Conozco el vocabulario: colores, muebles, objetos útiles, países y nacionalidades, precios y divisas."]]},
+{t:"Habilidades que se evalúan",i:[["c1","Comprendo textos cortos de las Unidades 1 y 2 (comprensión lectora)."],["c2","Escribo un párrafo Personal Profile con <i>and</i> y <i>but</i>, sin traducir palabra por palabra."]]},
+{t:"Para la instancia oral (30%)",i:[["d1","Pronuncio bien las contracciones (I’m, he’s, there’s)."],["d2","Deletreo mis datos y leo números, porcentajes y precios."],["d3","Acentúo bien las nacionalidades (Argen<b>ti</b>nian)."],["d4","Tengo listo mi póster o ficha del Proyecto 1 y practiqué la exposición en voz alta."]]},
+{t:"El día del examen",i:[["e1","Llevo la cartilla (págs. 9–32) y los útiles, y llego puntual."]]}];
+let ks={};try{ks=JSON.parse(localStorage.getItem("ing3du_ck")||"{}")}catch(e){}
+g("ckl").innerHTML=CK.map(b=>`<h3>${b.t}</h3>`+b.i.map(([id,x])=>`<label class='ck'><input type='checkbox' data-id='${id}'${ks[id]?" checked":""}><span>${x}</span></label>`).join("")).join("");
+function ckn(){const b=[...g("ckl").querySelectorAll("input")],n=b.filter(c=>c.checked).length;g("ckp").textContent=n+" de "+b.length+" temas listos";g("ckb").style.width=(n/b.length*100)+"%"}
+g("ckl").querySelectorAll("input").forEach(c=>c.onchange=()=>{ks[c.dataset.id]=c.checked;try{localStorage.setItem("ing3du_ck",JSON.stringify(ks))}catch(e){}ckn()});
+g("ckr").onclick=()=>{ks={};try{localStorage.removeItem("ing3du_ck")}catch(e){}g("ckl").querySelectorAll("input").forEach(c=>c.checked=false);ckn()};
+ckn();
 g("tb").innerHTML="<tr><th>Tema</th><th>Detalle</th></tr><tr><td>Unidad 1</td><td>People, págs. 9–20</td></tr><tr><td>Unidad 2</td><td>Possessions, págs. 21–32</td></tr><tr><td>Proyecto</td><td>My Personal &amp; Family Identity Profile</td></tr>"+D.fechas.map(x=>`<tr><td>${x.n}</td><td>${x.f}, ${x.h}</td></tr>`).join("");
 g("ft").textContent="Fuentes: Planificación Anual 2026 y rúbrica de producción escrita (Personal Profile, A1). Herramienta orientativa, sin valor de calificación oficial.";
 </script></main></body></html>
